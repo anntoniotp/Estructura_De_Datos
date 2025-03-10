@@ -1,0 +1,53 @@
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return None
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+
+def evaluate_postfix(expression):
+    stack = Stack()
+    operators = {'+', '-', '*', '/'}
+    
+    for token in expression.split():
+        if token.isdigit():
+            stack.push(int(token))
+        elif token in operators:
+            b = stack.pop()
+            a = stack.pop()
+            result = eval(f"{a}{token}{b}")
+            stack.push(result)
+    
+    return stack.pop()
+
+
+def evaluate_prefix(expression):
+    stack = Stack()
+    operators = {'+', '-', '*', '/'}
+    
+    for token in reversed(expression.split()):
+        if token.isdigit():
+            stack.push(int(token))
+        elif token in operators:
+            a = stack.pop()
+            b = stack.pop()
+            result = eval(f"{a}{token}{b}")
+            stack.push(result)
+    
+    return stack.pop()
+
+
+postfix_expr = "3 4 + 2 * 7 /"
+prefix_expr = "* + 3 4 / 2 7"
+
+print("Evaluación de expresión posfija:", evaluate_postfix(postfix_expr))  
+print("Evaluación de expresión prefija:", evaluate_prefix(prefix_expr))    
