@@ -1,0 +1,102 @@
+import pygame
+import sys
+
+# Inicializar pygame
+pygame.init()
+
+# Configuraciones
+WIDTH, HEIGHT = 800, 600
+FPS = 60
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+
+# Configuración de la pantalla
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Tower of Hanoi")
+
+# Configuración de los discos y las varas
+NUM_DISKS = 3
+ROD_WIDTH = 20
+ROD_HEIGHT = 300
+DISK_HEIGHT = 20
+DISK_WIDTH = 100
+ROD_SPACING = 250
+ROD_X = [WIDTH // 2 - ROD_SPACING, WIDTH // 2, WIDTH // 2 + ROD_SPACING]
+ROD_Y = HEIGHT - ROD_HEIGHT - 50
+
+# Inicializar los discos
+disks = [[i for i in range(NUM_DISKS, 0, -1)], [], []]
+selected_disk = None
+selected_rod = None
+
+def draw_rods():
+    for x in ROD_X:
+        pygame.draw.rect(screen, BLACK, (x - ROD_WIDTH // 2, ROD_Y, ROD_WIDTH, ROD_HEIGHT))
+
+def draw_disks():
+    for i, rod in enumerate(disks):
+        for j, disk in enumerate(rod):
+            disk_width = DISK_WIDTH * (disk / NUM_DISKS)
+            disk_x = ROD_X[i] - disk_width // 2
+            disk_y = ROD_Y + ROD_HEIGHT - (j + 1) * DISK_HEIGHT
+            pygame.draw.rect(screen, BLUE, (disk_x, disk_y, disk_width, DISK_HEIGHT))
+
+def draw():
+    screen.fill(WHITE)
+    draw_rods()
+    draw_disks()
+    pygame.display.flip()
+
+def is_valid_move(from_rod, to_rod):
+    if not disks[from_rod]:
+        return False
+    if not disks[to_rod]:
+        return True
+    return disks[from_rod][-1] < disks[to_rod][-1]
+
+def move_disk(from_rod, to_rod):
+    if is_valid_move(from_rod, to_rod):
+        disks[to_rod].append(disks[from_rod].pop())
+
+def check_win():
+    return len(disks[2]) == NUM_DISKS
+
+def main():
+    clock = pygame.time.Clock()
+    running = True
+    global selected_disk, selected_rod
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                for i, x in enumerate(ROD_X):
+                    if x - ROD_WIDTH // 2 <= mouse_x <= x + ROD_WIDTH // 2 and ROD_Y <= mouse_y <= ROD_Y + ROD_HEIGHT:
+                        if disks[i]:
+                            selected_disk = disks[i][-1]
+                            selected_rod = i
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if selected_disk is not None and selected_rod is not None:
+                    mouse_x, mouse_y = event.pos
+                    for i, x in enumerate(ROD_X):
+                        if x - ROD_WIDTH // 2 <= mouse_x <= x + ROD_WIDTH // 2 and ROD_Y <= mouse_y <= ROD_Y + ROD_HEIGHT:
+                            move_disk(selected_rod, i)
+                            if check_win():
+                                print("¡Has ganado!")
+                                running = False
+                    selected_disk = None
+                    selected_rod = None
+
+        draw()
+        clock.tick(FPS)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
