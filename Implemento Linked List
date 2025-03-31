@@ -1,0 +1,63 @@
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+class MyLinkedList:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar(self, dato):
+        nuevo_nodo = Nodo(dato)
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
+
+    def eliminar(self, dato):
+        actual = self.cabeza
+        previo = None
+        
+        while actual and actual.dato != dato:
+            previo = actual
+            actual = actual.siguiente
+        
+        if not actual:
+            return False  
+        
+        if not previo:
+            self.cabeza = actual.siguiente  
+        else:
+            previo.siguiente = actual.siguiente  
+        return True
+
+    def buscar(self, dato):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == dato:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def mostrar(self):
+        actual = self.cabeza
+        while actual:
+            print(actual.dato, end=" -> ")
+            actual = actual.siguiente
+        print("None")
+
+if __name__ == "__main__":
+    lista = MyLinkedList()
+    lista.agregar(10)
+    lista.agregar(20)
+    lista.agregar(30)
+    
+    print("Lista enlazada:")
+    lista.mostrar()
+    
+    print("Buscar 20:", lista.buscar(20))
+    print("Eliminar 20:", lista.eliminar(20))
+    lista.mostrar()
