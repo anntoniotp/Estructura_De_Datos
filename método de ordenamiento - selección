@@ -1,0 +1,13 @@
+def seleccion(lista):
+    n = len(lista)
+    for i in range(n):
+        max_idx = i
+        for j in range(i+1, n):
+            if lista[j] > lista[max_idx]:
+                max_idx = j
+        lista[i], lista[max_idx] = lista[max_idx], lista[i]
+    return lista
+
+calificaciones = [85, 92, 78, 90, 88, 76]
+print("Lista original:", calificaciones)
+print("Lista ordenada de mayor a menor:", seleccion(calificaciones))
